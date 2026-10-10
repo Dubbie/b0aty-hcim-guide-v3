@@ -72,6 +72,14 @@ public class PathTracker
 	private ApproachTracker approachTracker;
 
 	private List<Point> path = Collections.emptyList();
+	private QuestHelperSteps.Instruction authoredInstruction;
+	private WorldView authoredView;
+	private int authoredBaseX;
+	private int authoredBaseY;
+	private int authoredPlane;
+	private boolean authoredRoute;
+
+	public boolean hasAuthoredRoute() { return authoredRoute; }
 	private WorldPoint lastFrom;
 	private WorldPoint lastTo;
 	private TileObject destinationObject;
@@ -307,6 +315,9 @@ public class PathTracker
 	/** Drop the cached scene data. Called when the scene is replaced. */
 	public void onSceneChanged()
 	{
+		authoredInstruction = null;
+		authoredView = null;
+		authoredRoute = false;
 		entranceObject = null;
 		transforms.clear();
 		doorsFor = null;
@@ -380,6 +391,56 @@ public class PathTracker
 			return;
 		}
 
+		final QuestHelperSteps.Instruction navigation = tracker.getNavigationInstruction();
+		if (navigation != null && (navigation.isInventoryOnly() || navigation.hasQuestRoute()))
+		{
+			entrance = null;
+			entranceObject = null;
+			destinationObject = null;
+			destinationNpc = null;
+			lastTo = null;
+			final WorldView view = client.getTopLevelWorldView();
+			if (view != null && navigation == authoredInstruction && view == authoredView
+				&& view.getBaseX() == authoredBaseX && view.getBaseY() == authoredBaseY
+				&& view.getPlane() == authoredPlane) { return; }
+			authoredInstruction = navigation;
+			authoredView = view;
+			authoredRoute = navigation.hasQuestRoute();
+			if (view != null)
+			{
+				authoredBaseX = view.getBaseX();
+				authoredBaseY = view.getBaseY();
+				authoredPlane = view.getPlane();
+			}
+			final List<Point> authored = new java.util.ArrayList<>();
+			if (view != null)
+			{
+				for (List<Integer> raw : navigation.getLinePoints())
+				{
+					final WorldPoint point = pointOf(raw);
+					if (point == null) { authored.add(new Point(-1, -1)); continue; }
+					boolean loaded = false;
+					for (WorldPoint mapped : WorldPoint.toLocalInstance(client, point))
+					{
+						final LocalPoint local = LocalPoint.fromWorld(view, mapped);
+						if (local != null && mapped.getPlane() == view.getPlane())
+						{
+							authored.add(new Point(local.getSceneX(), local.getSceneY()));
+							loaded = true;
+							break;
+						}
+					}
+					// Preserve an unloaded segment break: never join nonadjacent waypoints.
+					if (!loaded) { authored.add(new Point(-1, -1)); }
+				}
+			}
+			path = authored;
+			reason = navigation.isInventoryOnly() ? "inventory interaction" : "Quest Helper's marked route";
+			return;
+		}
+
+		authoredInstruction = null;
+		authoredRoute = false;
 		final WorldPoint from = RealPoint.of(client, client.getLocalPlayer());
 		final WorldPoint to = from == null ? null : destination(from);
 		// A different *level* is a real obstacle -- a cellar is reached by its
@@ -728,6 +789,8 @@ public class PathTracker
 		{
 			return false;
 		}
+		if (resolved != null && SceneObjects.hasAction(resolved.getActions(), "Close", null)
+			&& !offersAnyAction(resolved, PASSABLE_ACTIONS)) { return false; }
 		return entryName(raw) || (resolved != raw && entryName(resolved));
 	}
 
@@ -965,6 +1028,13 @@ public class PathTracker
 		if (raw != null && raw.getImpostorIds() != null)
 		{
 			transforms.record(raw.getId(), resolved == null ? raw.getId() : resolved.getId());
+		}
+		// An explicit live Close state wins over a base definition's stale Open.
+		if (resolved != null && resolved != raw
+			&& SceneObjects.hasAction(resolved.getActions(), "Close", null)
+			&& !offersAnyAction(resolved, verbs))
+		{
+			return false;
 		}
 		return offersAnyAction(raw, verbs)
 			|| (resolved != raw && offersAnyAction(resolved, verbs));

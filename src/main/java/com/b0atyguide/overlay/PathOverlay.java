@@ -94,7 +94,8 @@ public class PathOverlay extends Overlay
 		graphics.setStroke(PATH_STROKE);
 
 		final Color colour = config.highlightColor();
-		final int drawn = Math.min(path.size(), MAX_TILES_DRAWN);
+		final int drawn = pathTracker.hasAuthoredRoute() ? path.size()
+			: Math.min(path.size(), MAX_TILES_DRAWN);
 		final Color[] colours = palette.forPath(colour, drawn);
 		Point previous = canvas(path.get(0));
 
@@ -123,6 +124,7 @@ public class PathOverlay extends Overlay
 	/** Centre of a scene tile on screen, or null when it is off camera. */
 	private Point canvas(java.awt.Point tile)
 	{
+		if (tile.x < 0 || tile.y < 0) { return null; }
 		final LocalPoint local = LocalPoint.fromScene(
 			tile.x, tile.y, client.getTopLevelWorldView());
 		return local == null ? null : Perspective.localToCanvas(client, local, 0);

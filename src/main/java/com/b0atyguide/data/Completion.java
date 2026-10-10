@@ -42,6 +42,9 @@ public class Completion
 
 	private String kind;
 	private int varplayer;
+	private Integer varbit;
+	private Integer varbitValue;
+	private String varbitName;
 	private String varplayerName;
 	private int bit;
 	private String skill;
@@ -74,7 +77,7 @@ public class Completion
 
 	public boolean isDiary()
 	{
-		return KIND_DIARY.equals(kind) && bit >= 0 && bit <= 31;
+		return KIND_DIARY.equals(kind) && (hasDiaryCondition() || hasDiaryRewardCondition());
 	}
 
 	/** The {@code net.runelite.api.Skill} name, or null when this is not a skill. */
@@ -116,7 +119,23 @@ public class Completion
 	 */
 	public boolean isSatisfiedBy(IntUnaryOperator varplayer, ToIntFunction<String> level)
 	{
+		return isSatisfiedBy(varplayer, id -> 0, level);
+	}
+
+	public boolean hasDiaryRewardCondition()
+	{
+		return varbit != null && varbit > 0 && varbitValue != null && varbitValue > 0;
+	}
+
+	public boolean isSatisfiedBy(IntUnaryOperator varplayer, IntUnaryOperator varbit,
+		ToIntFunction<String> level)
+	{
 		boolean any = false;
+		if (hasDiaryRewardCondition())
+		{
+			any = true;
+			if (varbit.applyAsInt(this.varbit) != varbitValue) { return false; }
+		}
 
 		if (hasDiaryCondition())
 		{
@@ -137,6 +156,12 @@ public class Completion
 		}
 
 		return any;
+	}
+
+	public boolean isValid()
+	{
+		return (hasDiaryCondition() || hasDiaryRewardCondition() || hasSkillCondition())
+			&& ((varbit == null && varbitValue == null) || hasDiaryRewardCondition());
 	}
 
 	/** A diary task bit worth reading. */

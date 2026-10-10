@@ -82,6 +82,8 @@ public class QuestHelperSteps
 		private String constant;
 		private List<Integer> point;
 		private List<List<Integer>> tiles;
+		private List<List<Integer>> linePoints;
+		private boolean questRoute;
 		private Integer panel;
 		private List<WidgetMark> widgets;
 		private List<WidgetPuzzle> widgetPuzzles;
@@ -301,6 +303,22 @@ public class QuestHelperSteps
 		public String getConstant()
 		{
 			return constant;
+		}
+
+		public List<List<Integer>> getLinePoints()
+		{
+			return linePoints == null ? Collections.emptyList() : linePoints;
+		}
+
+		public boolean hasQuestRoute()
+		{
+			return questRoute || !getLinePoints().isEmpty();
+		}
+
+		public boolean isInventoryOnly()
+		{
+			return getIds().isEmpty() && getPoint().isEmpty() && !hasQuestRoute()
+				&& !getInventoryHighlightIds().isEmpty();
 		}
 
 		public List<Integer> getPoint()

@@ -241,6 +241,12 @@ public class SceneTracker
 		// An instruction with no id still speaks if it names a tile and says the
 		// thing is scenery. Requiring ids here is what left Death on the Isle's
 		// window, cellar and wine unmarked while Quest Helper outlined them.
+		final QuestHelperSteps.Instruction navigation = step == null ? null : step.navigationInstruction(instruction);
+		if (navigation != null && navigation.isInventoryOnly())
+		{
+			clearMatches();
+			return;
+		}
 		final boolean hasInstruction = instruction != null
 			&& (!instruction.getIds().isEmpty()
 				|| (instruction.isObject() && !instruction.getPoint().isEmpty()));
@@ -273,7 +279,8 @@ public class SceneTracker
 		// A bounded quest instruction names an outcome, not one permanent NPC.
 		// Its live quest step must move on to the raft/rope/bookcase as required.
 		final boolean milestone = step != null && step.isQuestStep() && step.isQuestFollow();
-		final boolean specific = usable && !target.getIds().isEmpty() && !milestone;
+		final boolean specific = usable && !target.getIds().isEmpty()
+			&& step.navigationInstruction(instruction) == null;
 		if (hasInstruction && !specific)
 		{
 			source = "quest helper";

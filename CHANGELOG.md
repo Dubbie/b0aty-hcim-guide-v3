@@ -1,3 +1,13 @@
+# 1.3.4 - Quest routes, diary completion and automatic navigation
+
+- Preserve Quest Helper's marked routes, including the safe tunnel route in The Lost Tribe, instead of calculating shortcuts through them.
+- Use Quest Helper's exact object coordinate when it agrees with the guide's target ID, rather than choosing a nearer chest with the same name.
+- Suppress world routes for inventory-only quest interactions and generic Shortest Path requests for authored quest routes.
+- Account for closed-door interaction time when choosing between opening a door and walking around; respect an open door's live Close state.
+- Highlight both green d'hide chaps and vambraces in Scavvo's shop.
+- Automatically tick the five whole-diary completion steps after their rewards are claimed.
+- Add the optional Always use Shortest Path setting, disabled by default, to update routes when the selected destination changes.
+
 # 1.3.3 - Quest guidance and stutter fix
 
 - Fix the stutter when scenery loads, worst near the Wilderness Ditch, where an unreachable destination searched the whole scene about a hundred times a tick.
@@ -13,7 +23,7 @@
 - Accept compact, spaced, and hash-prefixed bank numbers, regardless of letter case.
 - Preserve ordinary item searches, unrelated tags, and bank layout slots.
 
-# 1.3.1 ? Performance and travel completion
+# 1.3.1 - Performance and travel completion
 
 - Batch variable-driven completion checks once per game tick and preserve the route cache when scenery transforms have not changed.
 - Resolve travel completion after destination and transport data, correcting the Grand Tree floor and adding plain teleport and home-teleport steps.

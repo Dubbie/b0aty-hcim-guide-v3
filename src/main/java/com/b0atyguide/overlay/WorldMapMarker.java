@@ -158,6 +158,7 @@ public class WorldMapMarker
 		// names an npc is about that npc, not about wherever the quest happens
 		// to stand.
 		final QuestHelperSteps.Instruction instruction = step.navigationInstruction(chosen);
+		if (instruction != null && instruction.isInventoryOnly()) { return Collections.emptyList(); }
 		if (instruction != null)
 		{
 			final List<WorldPoint> exact =

@@ -172,6 +172,19 @@ public interface B0atyGuideConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "alwaysUseShortestPath",
+		name = "Always use Shortest Path",
+		description = "Automatically route to the selected guide step and update when its destination changes. "
+			+ "Requires Shortest Path enabled and uses its existing routing settings.",
+		section = highlightSection,
+		position = 9
+	)
+	default boolean alwaysUseShortestPath()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "showMinimapArrow",
 		name = "Arrow on the minimap",
 		description =

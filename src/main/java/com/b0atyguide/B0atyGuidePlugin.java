@@ -25,6 +25,7 @@
 package com.b0atyguide;
 
 import com.b0atyguide.path.ShortestPathBridge;
+import com.b0atyguide.path.AutomaticShortestPath;
 
 import net.runelite.client.events.PluginMessage;
 
@@ -118,6 +119,7 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.events.PluginChanged;
 import net.runelite.client.events.ProfileChanged;
 import javax.swing.SwingUtilities;
 import net.runelite.client.plugins.Plugin;
@@ -237,6 +239,7 @@ public class B0atyGuidePlugin extends Plugin
 	/** The Quest Helper instruction the trackers were last pointed at. */
 	private QuestHelperSteps.Instruction lastInstruction;
 	private Integer resolvedPanel;
+	private final AutomaticShortestPath automaticRoutes = new AutomaticShortestPath();
 
 	/**
 	 * Where the player was standing as of the last tick.
@@ -423,6 +426,7 @@ public class B0atyGuidePlugin extends Plugin
 			progressReady = true;
 			return;
 		}
+		automaticRoutes.reset();
 		progressProfile = account;
 		progressReady = progressProfile != null;
 		final Map<String, String> memory = readQuestMemory(progressProfile);
@@ -568,7 +572,7 @@ public class B0atyGuidePlugin extends Plugin
 			B0atyGuideConfig.GROUP, "showFeatures", Boolean.toString(show));
 	}
 
-	/** An explicit request only: never replace another plugin's route on every tick. */
+	/** Explicit button request; remains available with automatic routing turned off. */
 	private void routeWithShortestPath()
 	{
 		final Step requested = currentStep;
@@ -579,10 +583,11 @@ public class B0atyGuidePlugin extends Plugin
 			{
 				return;
 			}
-			final PluginMessage message =
-				ShortestPathBridge.messageFor(requested, instructionFor(requested));
+			final QuestHelperSteps.Instruction instruction = instructionFor(requested);
+			final PluginMessage message = ShortestPathBridge.messageFor(requested, instruction);
 			if (message != null)
 			{
+				automaticRoutes.remember(requested, instruction, message);
 				eventBus.post(message);
 				panel.showRouteStatus("Destination sent. Enable the Shortest Path plugin to display its route.");
 			}
@@ -591,6 +596,27 @@ public class B0atyGuidePlugin extends Plugin
 				panel.showRouteStatus("This step has no single resolved destination.");
 			}
 		});
+	}
+
+	/** Cheap per-tick change check; only resolved selection changes send external requests. */
+	private void updateAutomaticRoute()
+	{
+		// Auto-completion can queue a new selection during this tick. Never pair
+		// that step with the previous step's instruction while the callback waits.
+		if (sceneTracker.getStep() != currentStep) { return; }
+		final PluginMessage message = automaticRoutes.next(config.alwaysUseShortestPath(),
+			currentStep, sceneTracker.getInstruction());
+		if (message != null) { eventBus.post(message); }
+	}
+
+	/** Also works when Shortest Path is installed/enabled after this plugin. */
+	@Subscribe
+	public void onPluginChanged(PluginChanged event)
+	{
+		if (event.isLoaded() && "shortestpath.ShortestPathPlugin".equals(event.getPlugin().getClass().getName()))
+		{
+			clientThread.invokeLater(automaticRoutes::reset);
+		}
 	}
 
 	private void onStepSelected(Step step)
@@ -992,7 +1018,7 @@ public class B0atyGuidePlugin extends Plugin
 			return;
 		}
 
-		if (AutoTick.completions(guide, progress, client::getVarpValue, this::realLevel,
+		if (AutoTick.completions(guide, progress, client::getVarpValue, client::getVarbitValue, this::realLevel,
 			Completion.KIND_SKILL) > 0)
 		{
 			saveProgress();
@@ -1032,7 +1058,7 @@ public class B0atyGuidePlugin extends Plugin
 			return;
 		}
 
-		if (AutoTick.completions(guide, progress, client::getVarpValue, this::realLevel,
+		if (AutoTick.completions(guide, progress, client::getVarpValue, client::getVarbitValue, this::realLevel,
 			Completion.KIND_DIARY) > 0)
 		{
 			saveProgress();
@@ -1096,6 +1122,7 @@ public class B0atyGuidePlugin extends Plugin
 		if (event.getGameState() == GameState.LOGIN_SCREEN
 			|| event.getGameState() == GameState.HOPPING)
 		{
+			automaticRoutes.reset();
 			progressReady = false;
 			currentStep = null;
 			sceneTracker.clear();
@@ -1171,6 +1198,7 @@ public class B0atyGuidePlugin extends Plugin
 			syncSkillCompletion();
 			syncQuestCompletion();
 		}
+		updateAutomaticRoute();
 	}
 
 	/** Only the current bank is scanned, once per game tick, never per frame. */
@@ -1530,6 +1558,7 @@ public class B0atyGuidePlugin extends Plugin
 	 */
 	private void releaseTrackers()
 	{
+		automaticRoutes.reset();
 		bankTags.clear();
 		withdrawTracker.clear();
 		withdrawOverlay.clear();
@@ -1560,6 +1589,10 @@ public class B0atyGuidePlugin extends Plugin
 			|| "legacyProgressAccount".equals(event.getKey()))
 		{
 			return;
+		}
+		if ("alwaysUseShortestPath".equals(event.getKey()))
+		{
+			clientThread.invokeLater(automaticRoutes::reset);
 		}
 		if ("registerBankTags".equals(event.getKey()))
 		{

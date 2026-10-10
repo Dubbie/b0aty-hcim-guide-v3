@@ -370,8 +370,20 @@ public class Step
 	 */
 	public QuestHelperSteps.Instruction navigationInstruction(QuestHelperSteps.Instruction instruction)
 	{
-		return target != null && !target.getIds().isEmpty() && !questFollow
-			? null : instruction;
+		if (instruction == null || target == null || target.getIds().isEmpty() || questFollow)
+		{
+			return instruction;
+		}
+		// Matching authoritative IDs let the quest refine a generic chest to its
+		// exact chest. An unrelated quest actor must not replace a guide errand.
+		if (target.getKind() != null && target.getKind().equals(instruction.getKind()))
+		{
+			for (Integer id : instruction.getIds())
+			{
+				if (target.getIds().contains(id)) { return instruction; }
+			}
+		}
+		return null;
 	}
 
 	/** The guide asks only to start; the mapped first progress value proves it. */

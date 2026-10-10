@@ -41,6 +41,11 @@ public final class ShortestPathBridge
 	public static PluginMessage messageFor(Step step, QuestHelperSteps.Instruction instruction)
 	{
 		if (step == null) { return null; }
+		final QuestHelperSteps.Instruction navigation = step.navigationInstruction(instruction);
+		if (navigation != null && (navigation.isInventoryOnly() || navigation.hasQuestRoute()))
+		{
+			return null; // A generic destination route would shortcut the authored quest route.
+		}
 		WorldPoint target = step.getArrivesAt();
 		if (target == null)
 		{

@@ -194,6 +194,107 @@ public final class PathFinder
 			: reconstruct(cameFrom, start, nearest);
 	}
 
+	/** Approximate three interaction ticks as six running tiles, in addition to crossing. */
+	static final int CLOSED_ENTRY_COST = 6;
+
+	/** Dijkstra on the augmented graph: an Open action is not a free walking edge. */
+	private static List<Point> findWithInteractionCost(int[][] flags, int[][] entries,
+		int startX, int startY, PathTarget target)
+	{
+		final int size = SCENE * SCENE;
+		final int[] cost = new int[size];
+		final int[] previous = new int[size];
+		java.util.Arrays.fill(cost, Integer.MAX_VALUE);
+		java.util.Arrays.fill(previous, -1);
+		final TileHeap heap = new TileHeap(cost);
+		final int start = index(startX, startY);
+		cost[start] = 0;
+		previous[start] = start;
+		heap.offer(start);
+		int nearest = start;
+		int gap = target.gap(startX, startY);
+		while (!heap.isEmpty())
+		{
+			final int current = heap.remove();
+			final int x = current % SCENE;
+			final int y = current / SCENE;
+			if (target.reached(flags, x, y)) { return reconstruct(previous, start, current); }
+			if (closer(current, cost[current], nearest, gap, cost[nearest], target))
+			{
+				nearest = current;
+				gap = target.gap(x, y);
+			}
+			for (int dir = 0; dir < DX.length; dir++)
+			{
+				final int nx = x + DX[dir];
+				final int ny = y + DY[dir];
+				if (outside(nx, ny) || !walkable(flags, entries, x, y, nx, ny, dir)) { continue; }
+				final int next = index(nx, ny);
+				final int candidate = cost[current] + 1
+					+ (walkable(flags, null, x, y, nx, ny, dir) ? 0 : CLOSED_ENTRY_COST);
+				if (candidate < cost[next])
+				{
+					cost[next] = candidate;
+					previous[next] = current;
+					heap.offer(next);
+				}
+			}
+		}
+		return nearest == start ? Collections.emptyList() : reconstruct(previous, start, nearest);
+	}
+
+	/** Primitive indexed heap; no node allocation per tile or per relaxation. */
+	private static final class TileHeap
+	{
+		private final int[] tiles = new int[SCENE * SCENE];
+		private final int[] position = new int[SCENE * SCENE];
+		private final int[] costs;
+		private int size;
+
+		TileHeap(int[] costs)
+		{
+			this.costs = costs;
+			java.util.Arrays.fill(position, -1);
+		}
+
+		boolean isEmpty() { return size == 0; }
+
+		void offer(int tile)
+		{
+			int at = position[tile];
+			if (at < 0) { at = size++; }
+			while (at > 0)
+			{
+				final int parent = (at - 1) / 2;
+				if (costs[tiles[parent]] <= costs[tile]) { break; }
+				tiles[at] = tiles[parent];
+				position[tiles[at]] = at;
+				at = parent;
+			}
+			tiles[at] = tile;
+			position[tile] = at;
+		}
+
+		int remove()
+		{
+			final int result = tiles[0];
+			position[result] = -1;
+			final int tail = tiles[--size];
+			int at = 0;
+			while (at * 2 + 1 < size)
+			{
+				int child = at * 2 + 1;
+				if (child + 1 < size && costs[tiles[child + 1]] < costs[tiles[child]]) { child++; }
+				if (costs[tail] <= costs[tiles[child]]) { break; }
+				tiles[at] = tiles[child];
+				position[tiles[at]] = at;
+				at = child;
+			}
+			if (size > 0) { tiles[at] = tail; position[tail] = at; }
+			return result;
+		}
+	}
+
 	/**
 	 * A route, and the way in when the destination is walled off.
 	 *
@@ -448,7 +549,7 @@ public final class PathFinder
 			return new EntrySearch(null, "not run: no " + kind + " entries");
 		}
 
-		final List<Point> through = find(flags, entries,
+		final List<Point> through = findWithInteractionCost(flags, entries,
 			startX, startY, target);
 		if (through.isEmpty())
 		{

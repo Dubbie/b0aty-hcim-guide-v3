@@ -159,6 +159,10 @@ public class GuideLoader
 				{
 					throw new GuideLoadException("invalid inventory action on " + step.getId());
 				}
+				if (step.getCompletion() != null && !step.getCompletion().isValid())
+				{
+					throw new GuideLoadException("invalid completion on " + step.getId());
+				}
 				validateMilestone(guide, step);
 			}
 		}

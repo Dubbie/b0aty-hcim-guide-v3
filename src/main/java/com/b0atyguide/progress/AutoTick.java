@@ -94,6 +94,12 @@ public final class AutoTick
 	public static int completions(Guide guide, Progress progress,
 		IntUnaryOperator varp, ToIntFunction<String> level, String onlyKind)
 	{
+		return completions(guide, progress, varp, id -> 0, level, onlyKind);
+	}
+
+	public static int completions(Guide guide, Progress progress,
+		IntUnaryOperator varp, IntUnaryOperator varbit, ToIntFunction<String> level, String onlyKind)
+	{
 		if (guide == null)
 		{
 			return 0;
@@ -114,7 +120,7 @@ public final class AutoTick
 				{
 					continue;
 				}
-				if (completion.isSatisfiedBy(varp, level))
+				if (completion.isSatisfiedBy(varp, varbit, level))
 				{
 					progress.setComplete(step.getId(), true);
 					count++;

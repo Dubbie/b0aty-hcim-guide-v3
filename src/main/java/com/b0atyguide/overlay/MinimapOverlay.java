@@ -29,7 +29,12 @@ import com.b0atyguide.data.Step;
 import com.b0atyguide.data.QuestHelperSteps;
 import com.b0atyguide.data.Target;
 import com.b0atyguide.path.RealPoint;
+import com.b0atyguide.path.PathTracker;
 import java.awt.Color;
+import java.awt.BasicStroke;
+import java.awt.Stroke;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -109,6 +114,11 @@ public class MinimapOverlay extends Overlay
 	private SceneTracker tracker;
 
 	@Inject
+	private PathTracker pathTracker;
+
+	private static final Stroke QUEST_ROUTE_STROKE = new BasicStroke(2);
+
+	@Inject
 	private ApproachTracker approachTracker;
 
 	@Inject
@@ -143,6 +153,13 @@ public class MinimapOverlay extends Overlay
 			return null;
 		}
 
+		final QuestHelperSteps.Instruction navigation = tracker.getNavigationInstruction();
+		if (navigation != null && navigation.isInventoryOnly()) { return null; }
+		if (navigation != null && navigation.hasQuestRoute())
+		{
+			if (config.showPath()) { drawQuestRoute(graphics); }
+			return null;
+		}
 		final Point point = minimapPoint(target);
 		if (point != null)
 		{
@@ -156,6 +173,35 @@ public class MinimapOverlay extends Overlay
 		// was the cost of dropping that arrow.
 		drawEdgeMarker(graphics, target);
 		return null;
+	}
+
+	/** Draw the authored segments, never a straight pointer through a maze. */
+	private void drawQuestRoute(Graphics2D graphics)
+	{
+		if (!pathTracker.hasAuthoredRoute()) { return; }
+		final Widget widget = minimapDrawArea();
+		final WorldView view = client.getTopLevelWorldView();
+		if (widget == null || view == null) { return; }
+		final Rectangle bounds = widget.getBounds();
+		final Shape priorClip = graphics.getClip();
+		final Stroke priorStroke = graphics.getStroke();
+		graphics.clip(new Ellipse2D.Double(bounds.x, bounds.y, bounds.width, bounds.height));
+		graphics.setStroke(QUEST_ROUTE_STROKE);
+		graphics.setColor(config.highlightColor());
+		Point previous = null;
+		for (java.awt.Point tile : pathTracker.getPath())
+		{
+			final LocalPoint local = tile.x < 0 || tile.y < 0 ? null
+				: LocalPoint.fromScene(tile.x, tile.y, view);
+			final Point current = local == null ? null : Perspective.localToMinimap(client, local);
+			if (previous != null && current != null)
+			{
+				graphics.drawLine(previous.getX(), previous.getY(), current.getX(), current.getY());
+			}
+			previous = current;
+		}
+		graphics.setStroke(priorStroke);
+		graphics.setClip(priorClip);
 	}
 
 	/**
@@ -284,6 +330,7 @@ public class MinimapOverlay extends Overlay
 		// step the guide says "continue Rune Mysteries" and Quest Helper says
 		// where.
 		final QuestHelperSteps.Instruction instruction = tracker.getNavigationInstruction();
+		if (instruction != null && (instruction.isInventoryOnly() || instruction.hasQuestRoute())) { return null; }
 		if (instruction != null)
 		{
 			final List<Integer> at = instruction.getPoint();
