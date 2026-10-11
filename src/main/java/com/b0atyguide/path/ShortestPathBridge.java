@@ -62,4 +62,10 @@ public final class ShortestPathBridge
 		// Wilderness preferences. No clear message: other routes remain theirs.
 		return new PluginMessage("shortestpath", "path", Collections.singletonMap("target", target));
 	}
+
+	/** Removes the current route; sent only to retract one this plugin requested. */
+	public static PluginMessage clearMessage()
+	{
+		return new PluginMessage("shortestpath", "clear");
+	}
 }

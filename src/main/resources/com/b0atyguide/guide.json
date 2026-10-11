@@ -31034,10 +31034,13 @@
        ]
       },
       {
-       "name": "Chaps",
-       "ids": []
+       "name": "studded chaps",
+       "ids": [
+        1097
+       ]
       }
      ],
+     "acquires": true,
      "tags": [
       {
        "tag": "Black Knights Fortress, Temple of Ikov"
@@ -33979,6 +33982,16 @@
       "confidence": "linked",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 4458,
+        "varbitName": "ARDOUGNE_DIARY_EASY_COMPLETE",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      }
     },
     {
@@ -48403,8 +48416,10 @@
        ]
       },
       {
-       "name": "Chaps",
-       "ids": []
+       "name": "studded chaps",
+       "ids": [
+        1097
+       ]
       },
       {
        "name": "Coif",
@@ -48448,6 +48463,7 @@
       }
      ],
      "withdraw": true,
+     "acquires": true,
      "spawns": [
       {
        "name": "Boots of Lightness",
@@ -48641,7 +48657,13 @@
      "ordinal": 15,
      "depth": 1,
      "kind": "step",
-     "text": "Equip your studded chaps"
+     "text": "Equip your studded chaps",
+     "inventoryAction": {
+      "kind": "interact",
+      "highlightIds": [
+       1097
+      ]
+     }
     },
     {
      "id": "307023bdde",
@@ -49235,8 +49257,10 @@
        ]
       },
       {
-       "name": "Chaps",
-       "ids": []
+       "name": "studded chaps",
+       "ids": [
+        1097
+       ]
       },
       {
        "name": "Coins",
@@ -67454,6 +67478,16 @@
       "confidence": "linked",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 7929,
+        "varbitName": "KOUREND_EASY_REWARD",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      }
     },
     {
@@ -70585,6 +70619,16 @@
       "confidence": "linked",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 3577,
+        "varbitName": "ATJUN_EASY_REWARD",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      }
     },
     {
@@ -78536,6 +78580,21 @@
       "confidence": "linked",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 4523,
+        "varbitName": "DESERT_EASY_REWARD",
+        "value": 1
+       },
+       {
+        "varbit": 4524,
+        "varbitName": "DESERT_MEDIUM_REWARD",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      }
     },
     {
@@ -80544,6 +80603,16 @@
       "confidence": "wiki-exact",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 4520,
+        "varbitName": "VARROCK_MEDIUM_REWARD",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      },
      "tags": [
       {
@@ -83177,9 +83246,13 @@
      "kind": "step",
      "text": "Complete Falador Easy Diary [Lamp on Herblore]",
      "completion": {
-      "varbit": 4503,
-      "varbitName": "FALADOR_EASY_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4503,
+        "varbitName": "FALADOR_EASY_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
@@ -83264,9 +83337,13 @@
      "kind": "step",
      "text": "Complete Morytania Easy Diary [Lamp on Herblore]",
      "completion": {
-      "varbit": 4527,
-      "varbitName": "MORYTANIA_EASY_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4527,
+        "varbitName": "MORYTANIA_EASY_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
@@ -83327,9 +83404,13 @@
      "kind": "step",
      "text": "Complete Lumbridge Easy Diary [Lamp on Herblore]",
      "completion": {
-      "varbit": 4535,
-      "varbitName": "LUMBRIDGE_EASY_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4535,
+        "varbitName": "LUMBRIDGE_EASY_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     }
@@ -97130,6 +97211,16 @@
       "confidence": "linked",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 7930,
+        "varbitName": "KOUREND_MEDIUM_REWARD",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      }
     },
     {
@@ -104984,9 +105075,13 @@
      "kind": "step",
      "text": "Complete the Karamja Hard Diary",
      "completion": {
-      "varbit": 3610,
-      "varbitName": "ATJUN_HARD_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 3610,
+        "varbitName": "ATJUN_HARD_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
@@ -106517,6 +106612,21 @@
       "confidence": "wiki-redirect",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 4528,
+        "varbitName": "MORYTANIA_MEDIUM_REWARD",
+        "value": 1
+       },
+       {
+        "varbit": 4529,
+        "varbitName": "MORYTANIA_HARD_REWARD",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      }
     },
     {
@@ -106924,9 +107034,13 @@
      "kind": "step",
      "text": "Complete Desert Hard Diary at Jarr (Lamp on Herblore)",
      "completion": {
-      "varbit": 4525,
-      "varbitName": "DESERT_HARD_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4525,
+        "varbitName": "DESERT_HARD_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
@@ -108528,6 +108642,16 @@
       "confidence": "wiki-exact",
       "pointSource": "wiki",
       "scattered": false
+     },
+     "completion": {
+      "varbits": [
+       {
+        "varbit": 7931,
+        "varbitName": "KOUREND_HARD_REWARD",
+        "value": 1
+       }
+      ],
+      "kind": "diary"
      }
     },
     {
@@ -727586,6 +727710,6 @@
   "ae34baad99": "8c44826480",
   "ba60f4f4fe": "c0297c1e56"
  },
- "contentHash": "a042db160cca6438",
- "generatedAt": "2026-10-10T19:41:55+00:00"
+ "contentHash": "51ac3e27e51d8e22",
+ "generatedAt": "2026-10-11T02:03:11+00:00"
 }

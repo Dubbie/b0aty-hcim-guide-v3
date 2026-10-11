@@ -95,6 +95,7 @@ public class MinimapOverlay extends Overlay
 	private static final int EDGE_ARROW = 10;
 	private static final int EDGE_INSET = 8;
 	private static final Color POINTER_SHADOW = new Color(0, 0, 0, 140);
+	private static final Stroke QUEST_ROUTE_STROKE = new BasicStroke(2);
 	private static final Polygon POINTER = new Polygon(
 		new int[]{0, -EDGE_ARROW / 2, EDGE_ARROW / 2},
 		new int[]{-EDGE_ARROW, EDGE_ARROW / 2, EDGE_ARROW / 2}, 3);
@@ -115,8 +116,6 @@ public class MinimapOverlay extends Overlay
 
 	@Inject
 	private PathTracker pathTracker;
-
-	private static final Stroke QUEST_ROUTE_STROKE = new BasicStroke(2);
 
 	@Inject
 	private ApproachTracker approachTracker;

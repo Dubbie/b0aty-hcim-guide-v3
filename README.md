@@ -10,8 +10,6 @@ highlighted in the world.
 
 *Every bank and step, with the setup image for the bank you are on.*
 
-Quest guidance preserves Quest Helper's literal marked routes, including tunnel and maze waypoints. Dynamic routes that require Quest Helper's own solver are left to Quest Helper rather than replaced with a guessed shortcut. Closed entries use an approximate three-tick interaction penalty when compared with walking detours.
-
 ## Using it
 
 The guide icon appears in the RuneLite sidebar. Steps are ticked by clicking
@@ -55,12 +53,8 @@ soft clay tick once the ingredients are combined.
 For routes beyond the loaded scene, enable the **Shortest Path** plugin and
 click **Route with Shortest Path** in the guide sidebar. It routes to the
 selected step when a single destination is known, using your Shortest Path
-settings. To update routes automatically, turn on **Always use Shortest Path**
-under **Highlights**. It is off by default. Selecting a different step or reaching
-a new quest destination updates the route; unchanged steps do not repeatedly
-restart pathfinding. Steps without a single resolved destination send no request.
-The sidebar button still works for one-off requests. Turning the setting off
-stops automatic updates; existing routes can be cleared in Shortest Path.
+settings. Turn on **Always use Shortest Path** to reroute whenever the selected
+step changes.
 
 
 The panel shows the date of the wiki revision the guide was built from, so

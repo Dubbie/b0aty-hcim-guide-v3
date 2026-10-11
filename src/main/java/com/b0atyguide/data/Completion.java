@@ -24,6 +24,7 @@
  */
 package com.b0atyguide.data;
 
+import java.util.List;
 import java.util.function.IntUnaryOperator;
 import java.util.function.ToIntFunction;
 
@@ -42,9 +43,7 @@ public class Completion
 
 	private String kind;
 	private int varplayer;
-	private Integer varbit;
-	private Integer varbitValue;
-	private String varbitName;
+	private List<VarbitState> varbits;
 	private String varplayerName;
 	private int bit;
 	private String skill;
@@ -77,7 +76,7 @@ public class Completion
 
 	public boolean isDiary()
 	{
-		return KIND_DIARY.equals(kind) && (hasDiaryCondition() || hasDiaryRewardCondition());
+		return KIND_DIARY.equals(kind) && (hasDiaryCondition() || hasVarbitCondition());
 	}
 
 	/** The {@code net.runelite.api.Skill} name, or null when this is not a skill. */
@@ -122,19 +121,32 @@ public class Completion
 		return isSatisfiedBy(varplayer, id -> 0, level);
 	}
 
-	public boolean hasDiaryRewardCondition()
+	/**
+	 * Whole diary tiers: a reward claimed, or a tier's tasks finished. A step
+	 * that ends two tiers ("Desert Easy &amp; Medium") lists both, and needs both.
+	 */
+	public boolean hasVarbitCondition()
 	{
-		return varbit != null && varbit > 0 && varbitValue != null && varbitValue > 0;
+		return varbits != null && !varbits.isEmpty();
 	}
 
+	/**
+	 * @param varbit reads a varbit by id; like a VarPlayer, a plain read
+	 */
 	public boolean isSatisfiedBy(IntUnaryOperator varplayer, IntUnaryOperator varbit,
 		ToIntFunction<String> level)
 	{
 		boolean any = false;
-		if (hasDiaryRewardCondition())
+		if (hasVarbitCondition())
 		{
 			any = true;
-			if (varbit.applyAsInt(this.varbit) != varbitValue) { return false; }
+			for (VarbitState state : varbits)
+			{
+				if (varbit.applyAsInt(state.varbit) != state.value)
+				{
+					return false;
+				}
+			}
 		}
 
 		if (hasDiaryCondition())
@@ -158,10 +170,44 @@ public class Completion
 		return any;
 	}
 
+	/** At least one condition, and no varbit entry that would read as zero. */
 	public boolean isValid()
 	{
-		return (hasDiaryCondition() || hasDiaryRewardCondition() || hasSkillCondition())
-			&& ((varbit == null && varbitValue == null) || hasDiaryRewardCondition());
+		if (varbits != null)
+		{
+			for (VarbitState state : varbits)
+			{
+				if (state == null || state.varbit <= 0 || state.value <= 0)
+				{
+					return false;
+				}
+			}
+		}
+		return hasDiaryCondition() || hasVarbitCondition() || hasSkillCondition();
+	}
+
+	/** One varbit and the exact value that means done. */
+	public static final class VarbitState
+	{
+		private int varbit;
+		private String varbitName;
+		private int value;
+
+		public int getVarbit()
+		{
+			return varbit;
+		}
+
+		/** The RuneLite constant name, for logs and for diffing the data. */
+		public String getVarbitName()
+		{
+			return varbitName;
+		}
+
+		public int getValue()
+		{
+			return value;
+		}
 	}
 
 	/** A diary task bit worth reading. */

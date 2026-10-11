@@ -49,9 +49,14 @@ public final class AutomaticShortestPath
 		final WorldPoint previousTarget = target;
 		final PluginMessage message = ShortestPathBridge.messageFor(selected, chosen);
 		remember(selected, chosen, message);
+		if (target == null)
+		{
+			// The route this sent leads to the last step's place. Clear it rather
+			// than leave it drawn; a route the player set themselves is untouched.
+			return previousTarget == null ? null : ShortestPathBridge.clearMessage();
+		}
 		// Text/dialogue changes can select another instruction at the same place.
-		return target == null || (selected == previousStep && target.equals(previousTarget))
-			? null : message;
+		return selected == previousStep && target.equals(previousTarget) ? null : message;
 	}
 
 	/** An explicit button request already sent this selection; do not send it again next tick. */

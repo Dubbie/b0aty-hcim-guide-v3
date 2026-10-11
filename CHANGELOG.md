@@ -1,12 +1,12 @@
 # 1.3.4 - Quest routes, diary completion and automatic navigation
 
-- Preserve Quest Helper's marked routes, including the safe tunnel route in The Lost Tribe, instead of calculating shortcuts through them.
-- Use Quest Helper's exact object coordinate when it agrees with the guide's target ID, rather than choosing a nearer chest with the same name.
-- Suppress world routes for inventory-only quest interactions and generic Shortest Path requests for authored quest routes.
-- Account for closed-door interaction time when choosing between opening a door and walking around; respect an open door's live Close state.
-- Highlight both green d'hide chaps and vambraces in Scavvo's shop.
-- Automatically tick the five whole-diary completion steps after their rewards are claimed.
-- Add the optional Always use Shortest Path setting, disabled by default, to update routes when the selected destination changes.
+- Draw Quest Helper's own routes, such as the safe tunnel route in The Lost Tribe, instead of cutting through them.
+- Point to the exact chest or object Quest Helper means when it matches the step, not a nearer one with the same name.
+- Stop drawing a route for quest steps done from the inventory.
+- Prefer a short walk around over opening a door, and stop treating open doors as closed.
+- Resolve shorthand armour lists such as "Studded Body & Chaps" and "Green D'hide Chaps & Vambs".
+- Tick steps that finish or hand in a whole diary tier, including two-tier hand-ins like Desert Easy & Medium.
+- Add an optional Always use Shortest Path setting that reroutes when the selected step changes.
 
 # 1.3.3 - Quest guidance and stutter fix
 

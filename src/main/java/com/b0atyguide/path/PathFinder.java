@@ -116,7 +116,7 @@ public final class PathFinder
 		}
 
 		final int[] cameFrom = new int[SCENE * SCENE];
-		java.util.Arrays.fill(cameFrom, -1);
+		Arrays.fill(cameFrom, -1);
 		final int start = index(startX, startY);
 		cameFrom[start] = start;
 
@@ -204,8 +204,8 @@ public final class PathFinder
 		final int size = SCENE * SCENE;
 		final int[] cost = new int[size];
 		final int[] previous = new int[size];
-		java.util.Arrays.fill(cost, Integer.MAX_VALUE);
-		java.util.Arrays.fill(previous, -1);
+		Arrays.fill(cost, Integer.MAX_VALUE);
+		Arrays.fill(previous, -1);
 		final TileHeap heap = new TileHeap(cost);
 		final int start = index(startX, startY);
 		cost[start] = 0;
@@ -254,7 +254,7 @@ public final class PathFinder
 		TileHeap(int[] costs)
 		{
 			this.costs = costs;
-			java.util.Arrays.fill(position, -1);
+			Arrays.fill(position, -1);
 		}
 
 		boolean isEmpty() { return size == 0; }
@@ -991,7 +991,7 @@ public final class PathFinder
 	private static int[] floodToTarget(int[][] flags, PathTarget target)
 	{
 		final int[] cost = new int[SCENE * SCENE];
-		java.util.Arrays.fill(cost, -1);
+		Arrays.fill(cost, -1);
 		final Deque<Integer> queue = new ArrayDeque<>();
 		for (int y = 0; y < SCENE; y++)
 		{
@@ -1034,7 +1034,7 @@ public final class PathFinder
 			return null;
 		}
 		final int[] cost = new int[SCENE * SCENE];
-		java.util.Arrays.fill(cost, -1);
+		Arrays.fill(cost, -1);
 		final Deque<Integer> queue = new ArrayDeque<>();
 		final int start = index(fromX, fromY);
 		cost[start] = 0;

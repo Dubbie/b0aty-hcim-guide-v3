@@ -31,6 +31,7 @@ import com.b0atyguide.data.Target;
 import com.b0atyguide.overlay.ApproachTracker;
 import com.b0atyguide.overlay.SceneTracker;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
@@ -78,8 +79,6 @@ public class PathTracker
 	private int authoredBaseY;
 	private int authoredPlane;
 	private boolean authoredRoute;
-
-	public boolean hasAuthoredRoute() { return authoredRoute; }
 	private WorldPoint lastFrom;
 	private WorldPoint lastTo;
 	private TileObject destinationObject;
@@ -90,6 +89,12 @@ public class PathTracker
 	public List<Point> getPath()
 	{
 		return path;
+	}
+
+	/** Whether {@link #getPath} is Quest Helper's drawn route, not one computed here. */
+	public boolean hasAuthoredRoute()
+	{
+		return authoredRoute;
 	}
 
 	/** The pathfinding implementation in this running Java build. */
@@ -412,7 +417,7 @@ public class PathTracker
 				authoredBaseY = view.getBaseY();
 				authoredPlane = view.getPlane();
 			}
-			final List<Point> authored = new java.util.ArrayList<>();
+			final List<Point> authored = new ArrayList<>();
 			if (view != null)
 			{
 				for (List<Integer> raw : navigation.getLinePoints())
@@ -420,7 +425,7 @@ public class PathTracker
 					final WorldPoint point = pointOf(raw);
 					if (point == null) { authored.add(new Point(-1, -1)); continue; }
 					boolean loaded = false;
-					for (WorldPoint mapped : WorldPoint.toLocalInstance(client, point))
+					for (WorldPoint mapped : WorldPoint.toLocalInstance(view, point))
 					{
 						final LocalPoint local = LocalPoint.fromWorld(view, mapped);
 						if (local != null && mapped.getPlane() == view.getPlane())
