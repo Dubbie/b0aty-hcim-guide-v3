@@ -83366,9 +83366,13 @@
      "kind": "step",
      "text": "Complete Falador Easy Diary [Lamp on Herblore]",
      "completion": {
-      "varbit": 4503,
-      "varbitName": "FALADOR_EASY_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4503,
+        "varbitName": "FALADOR_EASY_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
@@ -83453,9 +83457,13 @@
      "kind": "step",
      "text": "Complete Morytania Easy Diary [Lamp on Herblore]",
      "completion": {
-      "varbit": 4527,
-      "varbitName": "MORYTANIA_EASY_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4527,
+        "varbitName": "MORYTANIA_EASY_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
@@ -83516,9 +83524,13 @@
      "kind": "step",
      "text": "Complete Lumbridge Easy Diary [Lamp on Herblore]",
      "completion": {
-      "varbit": 4535,
-      "varbitName": "LUMBRIDGE_EASY_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4535,
+        "varbitName": "LUMBRIDGE_EASY_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     }
@@ -105288,9 +105300,13 @@
      "kind": "step",
      "text": "Complete the Karamja Hard Diary",
      "completion": {
-      "varbit": 3610,
-      "varbitName": "ATJUN_HARD_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 3610,
+        "varbitName": "ATJUN_HARD_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
@@ -107248,9 +107264,13 @@
      "kind": "step",
      "text": "Complete Desert Hard Diary at Jarr (Lamp on Herblore)",
      "completion": {
-      "varbit": 4525,
-      "varbitName": "DESERT_HARD_REWARD",
-      "varbitValue": 1,
+      "varbits": [
+       {
+        "varbit": 4525,
+        "varbitName": "DESERT_HARD_REWARD",
+        "value": 1
+       }
+      ],
       "kind": "diary"
      }
     },
